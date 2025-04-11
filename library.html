@@ -4,12 +4,14 @@
     </head>
     <body>
         <div class="table-container"></div>
+        <button onclick="renderNewBookDialog()">Create new book</button>
     </body>
 </html>
 
 <style>
     * {
         box-sizing: border-box;
+        font-family: 'Courier New', Courier, monospace;
     }
 
     .table-container {
@@ -30,9 +32,14 @@
         margin-bottom: 20px;
         flex: 0 0 300px;
         border: 1px black solid;
+        display: flex;
+        flex-direction: column;
     }
 
     .card > button {
+    }
+
+    .card > h2 {
         margin-top: auto;
     }
 
@@ -40,10 +47,6 @@
 
 <script>
     const books = [
-        new Book("To Kill a Mockingbird", "Harper Lee", 1960, 281, true),
-        new Book("1984", "George Orwell", 1949, 328, false),
-        new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925, 180, true),
-        new Book("Moby Dick", "Herman Melville", 1851, 635, false)
     ];
 
     const bookContainer = document.querySelector(".table-container")
@@ -57,6 +60,8 @@
         this.read = read
     }
 
+    
+    
     function renderCards() {
         for (const book of books) {
             let cardContent = `
@@ -67,17 +72,114 @@
                     <h2>
                         ${book.year}    
                     </h2>
-                    <button>Ver mais</button>
+                    <button id="button-${book.id}">Ver mais</button>
                 </div>
             `
             bookContainer.insertAdjacentHTML("afterbegin", cardContent)
+            
+            button = document.querySelector(`#button-${book.id}`)
+            button.onclick = () => renderModal(book)
         }
     }
 
-    fuction renderModal() {
-        let modal = ``
+    function Modal(book) {
+        this.DOMElement = document.createElement('template')
+        this.DOMElement.innerHTML = `
+        <dialog closed class="modal">
+            <h1>
+                ${book.title}    
+            </h1>
+            <p>
+                Author: ${book.author}
+            </p>
+            <p>
+                Year: ${book.year}
+            </p>
+            <p>
+                Pages: ${book.pages}
+            </p>
+            <p>
+                Read: ${book.read ? "Yes" : "No"}
+            </p>
+            <button>Fechar</button>
+        </dialog>
+        `
+        this.DOMElement = this.DOMElement.content.firstElementChild
     }
 
+    function closeModal(modal) {
+        modal.close()
+    }
+    
+    function renderModal(book) {
+        console.log("oi")
+        modal = new Modal(book)
+        modal = modal.DOMElement
+        document.body.appendChild(modal)
+        modal.showModal()
+        let button = modal.querySelector("button")
+        button.onclick = () => closeModal(modal)
+    }
+
+    function NewBookDialog() {
+        this.DOMElement = document.createElement("template")
+        this.DOMElement.innerHTML = `
+            <dialog class="new-book-dialog">
+                <h1>Add New Book</h1>
+                <form method="dialog">
+                    <label>
+                        Title:
+                        <input type="text" name="title" required>
+                    </label>
+                    <label>
+                        Author:
+                        <input type="text" name="author" required>
+                    </label>
+                    <label>
+                        Year:
+                        <input type="number" name="year" required>
+                    </label>
+                    <label>
+                        Pages:
+                        <input type="number" name="pages" required>
+                    </label>
+                    <label>
+                        Read:
+                        <input type="checkbox" name="read">
+                    </label>
+                    <button type="submit">Add Book</button>
+                    <button type="button" onclick="this.closest('dialog').close()">Cancel</button>
+                </form>
+            </dialog>
+        `
+        this.DOMElement = this.DOMElement.content.firstElementChild
+        this.DOMElement.onsubmit = (event) => {
+            event.preventDefault();
+            const formData = new FormData(this.DOMElement.querySelector("form"));
+            const newBook = new Book(
+            formData.get("title"),
+            formData.get("author"),
+            parseInt(formData.get("year")),
+            parseInt(formData.get("pages")),
+            formData.get("read") === "on"
+            );
+            books.push(newBook);
+            document.querySelector(".table-container").innerHTML = ""; // Clear existing cards
+            renderCards(); // Re-render cards
+            this.DOMElement.close(); // Close the dialog
+        }
+   
+
+    }
+
+    function renderNewBookDialog() {
+        let dialog = new NewBookDialog()
+        let modal = dialog.DOMElement
+        document.body.appendChild(modal)
+        modal.showModal(modal)
+
+        console.log(dialog.DOMElement)
+    }
 
     renderCards()
 
