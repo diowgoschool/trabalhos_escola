@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        * {
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+        }
+        label {
+            padding-left: 10px;
+        }
+
+
+        .container {
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            padding: 50px;
+            background-color: aliceblue;
+            border-radius: 30px;
+
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.409);
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .items {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: end;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            background: rgb(50, 50, 165);
+            color: white;
+            border-style: none;
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            background: rgb(75, 75, 255);
+            cursor: pointer;
+        }
+
+
+    </style>
+    <div class="content">
+        
+        <div class="container">
+            <div class="items">
+                <div>
+                    <label for="name">Digite o seu nome:</label>
+                    <input id="name" type="text">
+                </div>
+        
+                <div>
+                    <label for="birthYear">Ano de nascimento:</label>
+                    <input id="birthYear" type="number">
+        
+                </div>
+                </div>
+        
+        
+                <button onclick="submit()">Calcular a minha idade</button>
+        
+                <p id="age"></p>
+        </div>
+    </div>
+    </div>
+    <script>
+
+        function submit() {
+            let name = document.querySelector("input#name").value
+            let birthYear = document.querySelector("input#birthYear")
+            birthYear = birthYear.value
+            let dateNow = new Date()
+            let actualYear = dateNow.getFullYear()
+
+            let isBirthYearValid = validadeBirthYear(birthYear, actualYear)
+            let isNameValid = validateName(name)
+            if (isBirthYearValid && isNameValid) {
+                ageParagraph = document.querySelector("p#age")
+                ageParagraph.innerText = `Eu tenho ${actualYear - birthYear} anos de idade.`
+            }
+
+        }
+
+        function validateName(name) {
+            if (name.trim() === "") {
+                alert("Seu nome está em branco!")
+                return false
+            }
+            return true
+        }
+
+        function validadeBirthYear(birthYear, actualYear) {
+            if (birthYear == '' || birthYear > actualYear) {
+                alert("Seu ano de nascimento está em branco!")
+                return false
+            }
+            return true
+
+        }
+
+    </script>
+
+</body>
+</html>
